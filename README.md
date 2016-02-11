@@ -427,9 +427,11 @@ const saveFile = function (content) {
     title: 'Save HTML Output',
     defaultPath: app.getPath('documents'),
     filters: [
-      { name: 'Text Files', extensions: ['txt', 'markdown', 'md'] }
+      { name: 'HTML Files', extensions: ['html'] }
     ]
   });
+
+  if (!fileName) { return; }
 
   fs.writeFileSync(fileName, content);
 };
@@ -576,11 +578,94 @@ if (process.platform == 'darwin') {
       {
         label: 'Quit',
         accelerator: 'Command+Q',
-        click: function() { app.quit(); }
+        click() { app.quit(); }
       },
     ]
   });
 }
-
 ```
 
+Welcome back! Let's take a closer look some of the moving pieces in the large chunk of code above. The template is an array of menu items. In this case, we have "File" and "Edit"—each with their own submenus. Under "File," we have two menu items: "Save" and "Open." When clicked, they fire `openFile` and `saveFile` respectively. We're also assigning each an "accelerator" (also know as a shortcut or hot key).
+
+In the "Edit" menu, we have some of the familiar commands: undo, redo, copy, cut, paste, select all. We probably don't want to reinvent the wheel. It would be great if each would do their normal thing. Electron allows us to define their "role," which will trigger the native OS behavior.
+
+```js
+{
+  label: 'Copy',
+  accelerator: 'CmdOrCtrl+C',
+  role: 'copy'
+}
+```
+
+You might also notice that we're defining the accelerator as "CmdOrCtrl+C". Electron will make the right choice on our behalf when it compiles for OS X, Windows, and/or Linux.
+
+Application for OS X have an additional menu with the application's name and some common OS-specific menu items. We only want to add this menu if our Electron application is running in OS X.
+
+```js
+if (process.platform == 'darwin') { … }
+```
+
+[Darwin][] is the UNIX foundation that OS X is built on. The `process.platform` is baked into Node and returns 'darwin', 'freebsd', 'linux', 'sunos' or 'win32' depending on the platform it's being run from.
+
+[Darwin]: https://en.wikipedia.org/wiki/Darwin_(operating_system)
+
+We'll use `unshift` to push it onto the front of the array. OS X will stubbornly continue to use "Electron" as the application title. In order to override this, we'll have to adjust the `plist` file that Electron generates when it builds the file. This is the same process we'll use for a custom application icon.
+
+## Electron's `shell` Module
+
+We have a little bit of a bug in our application. If we have a link in our Markdown file and we click it, it will load inside of application which kind of ruins the illusion that we're building a native application. Even worse: we don't have a back button. So, we can't return to our regularly-schedule application. Luckily, Electron's `shell` module allows us to access the OS's ability to open files as well as expose their location in the file system.
+
+In `renderer.js`, let's bring in Electron's `shell` module:
+
+```js
+const shell = electron.shell;
+```
+
+Now, we'll listen for link clicks and ask them politely to open in a new window instead of stepping over our little application.
+
+```js
+$(document).on('click', 'a[href^="http"]', function (event) {
+  event.preventDefault();
+  shell.openExternal(this.href);
+});
+```
+
+## Appending the the Recent Documents Menu
+
+Operating systems keep a record of recent files. We want our application to hook into this functionality. Doing this is fairly, simple. In our `openFile` function, we'll add the following:
+
+```js
+app.addRecentDocument(file);
+```
+
+![Recent Documents](images/03-recent-documents.png)
+
+As you can see, adding files to the list of recent documents is easy. What we haven't done is set up our application to open any of those files in the recent documents list when they're selected.
+
+Whenever we select a file from the list of recent documents, `app` fires an `open-file` event. We can listen for this event, read the file, and then send it to the renderer process.
+
+```js
+app.on('open-file', function (event, file) {
+  var content = fs.readFileSync(file).toString();
+  mainWindow.webContents.send('file-opened', content);
+});
+```
+
+## Displaying Notifications
+
+Electron allows us to display hook into the a given operating system's notification API. Right now, our "Copy HTML" button works, but it does it silently. This isn't the best use case notifications, but's a good enough opportunity to take it for a spin.
+
+Let's change the following event listener in `renderer.js`:
+
+```js
+$copyHtmlButton.on('click', () => {
+  let html = $htmlView.html();
+  clipboard.writeText(html);
+
+  new Notification('Output Saved', {
+    body: 'Your HTML has been saved to the clipboard.'
+  });
+});
+```
+
+Go ahead and take it for a spin. Hit the "Copy HTML" button and bask the glory of your brand-new notification.

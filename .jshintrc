@@ -1,4 +1,8 @@
 {
+  "predef": [
+    "document",
+    "Notification"
+  ],
   "node": true,
   "esversion": 6
 }
