@@ -307,7 +307,7 @@ When the renderer process gets a message on the `file-opened` channel from the m
 
 ```js
 ipc.on('file-opened', function (event, content) {
-  $('.raw-markdown').text(content);
+  $markdownView.text(content);
 });
 ```
 
