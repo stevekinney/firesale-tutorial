@@ -332,7 +332,7 @@ The first time we'll probably want to do this is when we load a Markdown file. U
 
 ```js
 ipc.on('file-opened', function (event, content) {
-  $('.raw-markdown').text(content);
+  $markdownView.text(content);
   renderMarkdownToHtml(content);
 });
 ```
