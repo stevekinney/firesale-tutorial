@@ -1,6 +1,7 @@
 # Firesale
 
 A tutorial on building a Markdown renderer in Electron.
+[Here](https://vimeo.com/155240396) is a video walkthrough.
 
 ## Getting Started and Acclimated
 
