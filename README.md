@@ -710,7 +710,7 @@ ipc.on('file-opened', function (event, file, content) {
   $showInFileSystemButton.attr('disabled', false);
   $openInDefaultEditorButton.attr('disabled', false);
 
-  $('.raw-markdown').text(content);
+  $markdownView.text(content);
   renderMarkdownToHtml(content);
 });
 ```
