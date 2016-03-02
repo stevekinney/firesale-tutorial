@@ -1,10 +1,14 @@
 # Firesale
 
-A tutorial on building a Markdown renderer in Electron.
+This is a tutorial for building a Markdown-to-HTML renderer using Electron. It is meant to accompany my session on _Building a desktop application with Electron_ ([Part 1][] and [Part 2][]) at [O'Reilly's Fluent Conference 2016][fluent].
+
+[Part 1]: http://conferences.oreilly.com/fluent/javascript-html-us/public/schedule/detail/46730
+[Part 2]: http://conferences.oreilly.com/fluent/javascript-html-us/public/schedule/detail/47788
+[fluent]: http://conferences.oreilly.com/fluent/javascript-html-us
 
 ## Getting Started and Acclimated
 
-Clone this repository and install the dependencies using `npm install`.
+To get started, clone this repository and install the dependencies using `npm install`.
 
 We'll be working with four files for the duration of this tutorial:
 
@@ -13,11 +17,11 @@ We'll be working with four files for the duration of this tutorial:
 - `lib/index.html`, which will contain the HTML for the user interface
 - `lib/style.css`, which will contain the CSS to style the user interface
 
-In a more robust application, you might break stuff into smaller files, but we're not going to for the sake of simplicity.
+In a more robust application, you might break stuff into smaller files, but—for the sake of simplicity—we're not going to.
 
 ## Hello World
 
-Now that we have our dependencies and some basic files. Let's get our Electron application to the point where we can launch it.
+Now that we have our dependencies and some basic files, let's get our Electron application to the point where we can launch it.
 
 Everything in Electron lives inside of the `electron` library. Let's start by requiring it inside of `main.js`.
 
@@ -73,9 +77,9 @@ const BrowserWindow = electron.BrowserWindow;
 We'll create the main window for our application when the application is ready. That said, we need declare a variable to store our main window in the top level scope. This is due to the combination of two facts:
 
 1. JavaScript has function scopes.
-1. Our `ready` even listener is a function.
+1. Our `ready` event listener is a function.
 
-If we declared `mainWindow` variable in our event listener, it would be eligible for garbage collection as soon as that function is done executing, which is bad news.
+If we declared `mainWindow` variable in our event listener, it would be eligible for garbage collection as soon as that function is done executing, which is bad news. We'll declare `mainWindow` in the top-level scope.
 
 To avoid this, we'll update `main.js` as follows:
 
@@ -119,11 +123,13 @@ app.on('ready', function () {
 });
 ```
 
+In the code above, `__dirname` is a globally-available Node variable that references the current directory that Node is running from. In this case, we're executing `./lib/main.js`, so `__dirname` is the `lib` directory relative to where ever you installed this repository.
+
 ![Hello World](images/02-hello-world.png)
 
 ## Opening a File
 
-One of the big motivations for building an Electron application is the promise of being able to do stuff we wouldn't normally be able to do in the browser. Prime examples of this are activating native OS dialogs and accessing the filesystem.
+One of the big motivations for building an Electron application is the promise of being able to do stuff we wouldn't normally be able to do in the browser. Prime examples are activating native OS dialogs and accessing the filesystem.
 
 Actions like accessing the filesystem and calling native dialogs and menus are best handled by the main process. That said, we're eventually going to need to display the results in our renderer process as well as add buttons to our user interface for initiating the process of opening a file.
 
@@ -267,6 +273,8 @@ app.on('ready', function () {
   // More code below…
 });
 ```
+
+(If this is distracting for you, feel free to remove this line, you'll be able to open these tools using the application's menus until we replace them later on this in tutorial.)
 
 The main process and our renderer process are completely separate. In order to facilitate communication between the two, we need to use Electron's interprocess communication (IPC) protocol. In `renderer.js`, we'll require Electron and the `ipcRenderer` module.
 
@@ -650,22 +658,3 @@ app.on('open-file', function (event, file) {
   mainWindow.webContents.send('file-opened', content);
 });
 ```
-
-## Displaying Notifications
-
-Electron allows us to display hook into the a given operating system's notification API. Right now, our "Copy HTML" button works, but it does it silently. This isn't the best use case notifications, but's a good enough opportunity to take it for a spin.
-
-Let's change the following event listener in `renderer.js`:
-
-```js
-$copyHtmlButton.on('click', () => {
-  let html = $htmlView.html();
-  clipboard.writeText(html);
-
-  new Notification('Output Saved', {
-    body: 'Your HTML has been saved to the clipboard.'
-  });
-});
-```
-
-Go ahead and take it for a spin. Hit the "Copy HTML" button and bask the glory of your brand-new notification.
