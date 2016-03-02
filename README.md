@@ -249,7 +249,7 @@ So, we can load files and log them to the terminal. That's great, but it's nothi
 Instead of logging to the console, let's send the content to the `mainWindow`. Replace the `console.log` in `openFile` with the following:
 
 ```js
-mainWindow.webContents.send('file-opened', content);
+mainWindow.webContents.send('file-opened', file, content);
 ```
 
 ## Writing Renderer Code
@@ -286,7 +286,7 @@ const ipc = electron.ipcRenderer;
 When we load a file, the main process is sending our renderer process a message with the contents over the `file-opened` channel. (This channel name is completely arbitrary could very well be `sandwich`.) Let's set up a listener.
 
 ```js
-ipc.on('file-opened', function (event, content) {
+ipc.on('file-opened', function (event, file, content) {
   console.log(content);
 });
 ```
@@ -314,7 +314,7 @@ const $copyHtmlButton = $('#copy-html');
 When the renderer process gets a message on the `file-opened` channel from the main process, we'll display those contents in the `$markdownView` element.
 
 ```js
-ipc.on('file-opened', function (event, content) {
+ipc.on('file-opened', function (event, file, content) {
   $('.raw-markdown').text(content);
 });
 ```
@@ -339,7 +339,7 @@ function renderMarkdownToHtml(markdown) {
 The first time we'll probably want to do this is when we load a Markdown file. Update your event listener as follows:
 
 ```js
-ipc.on('file-opened', function (event, content) {
+ipc.on('file-opened', function (event, file, content) {
   $('.raw-markdown').text(content);
   renderMarkdownToHtml(content);
 });
@@ -655,6 +655,78 @@ Whenever we select a file from the list of recent documents, `app` fires an `ope
 ```js
 app.on('open-file', function (event, file) {
   var content = fs.readFileSync(file).toString();
-  mainWindow.webContents.send('file-opened', content);
+  mainWindow.webContents.send('file-opened', file, content);
 });
 ```
+
+## Accessing the Outside World
+
+As we've seen with the recent documents list, one of the really cool things about Electron is that we can interact with the operating system around us. Let's add two more features to Firesale.
+
+- A "Show in File System" button that will ask the operating system to show us where the markdown file is located on in either the Finder or Windows Explorer.
+- A "Open in Default Editor" button that will open the current file in whatever application has designated as the default application for Markdown files.
+
+To get started, we'll have to add these two buttons to the page. We'll update our controls section as follows:
+
+```html
+<section class="controls">
+  <button id="open-file">Open File</button>
+  <button id="copy-html">Copy HTML</button>
+  <button id="save-file">Save HTML</button>
+  <button id="show-in-file-system" disabled="true">Show in File System</button>
+  <button id="open-in-default-editor" disabled="true">Open in Default Editor</button>
+</section>
+```
+
+The final two buttons are the new buttons. The first three should be familiar from before. We've disabled them, because there is no active file when the application starts up. When the user opens a file, we'll have the main process inform the renderer process, which will then enable these buttons.
+
+We'll also store a reference to each of them in `renderer.js`.
+
+```js
+const $showInFileSystemButton = $('#show-in-file-system');
+const $openInDefaultEditorButton = $('#open-in-default-editor');
+```
+
+As we discussed earlier, Electron's `shell` module [provides functionality to both the main and renderer processes that aides with desktop integration][shell].
+
+[shell]: http://electron.atom.io/docs/v0.36.8/api/shell/
+
+### Activating the Buttons
+
+Earlier we set up our main process to send the name of the file and its contents to the renderer process whenever it opened a new file. Let's go ahead and create a top-level variable to store the current file that's open so that we can reference it later.
+
+In `renderer.js`:
+
+```js
+var currentFile = null;
+```
+
+We'll also modify our `file-opened` event listener to update `currentFile` and enable the buttons.
+
+```js
+ipc.on('file-opened', function (event, file, content) {
+  currentFile = file;
+
+  $showInFileSystemButton.attr('disabled', false);
+  $openInDefaultEditorButton.attr('disabled', false);
+
+  $('.raw-markdown').text(content);
+  renderMarkdownToHtml(content);
+});
+```
+
+### Adding Functionality to the Buttons
+
+Super cool. Now we just need to make the buttons do what they're supposed to do.
+
+```js
+$showInFileSystemButton.on('click', () => {
+  shell.showItemInFolder(currentFile);
+});
+
+$openInDefaultEditorButton.on('click', () => {
+  shell.openItem(currentFile);
+});
+```
+
+Yea, that's actually it. Don't take my word for it. Verify that it works for yourself.
