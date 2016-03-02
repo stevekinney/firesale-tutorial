@@ -713,5 +713,6 @@ ipc.on('file-opened', function (event, file, content) {
   $markdownView.text(content);
   renderMarkdownToHtml(content);
 });
+```
 
 Yea, that's actually it. Don't take my word for it. Verify that it works for yourself.
