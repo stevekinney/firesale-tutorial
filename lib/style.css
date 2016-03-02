@@ -45,6 +45,10 @@ textarea, input, div, button { outline: none; }
   background-color: rgb(144, 182, 177);
 }
 
+.controls button:disabled {
+  background-color: rgb(196, 204, 202);
+}
+
 .content {
   height: 100%;
   display: flex;
