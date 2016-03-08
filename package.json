@@ -4,7 +4,8 @@
   "description": "A Markdown-to-HTML renderer",
   "main": "lib/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-packager . 'Fire Sale' --platform=all --arch=all --version=0.36.8"
   },
   "repository": {
     "type": "git",
