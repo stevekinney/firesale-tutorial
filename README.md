@@ -638,7 +638,7 @@ $(document).on('click', 'a[href^="http"]', function (event) {
 });
 ```
 
-## Appending the the Recent Documents Menu
+## Appending to the Recent Documents Menu
 
 Operating systems keep a record of recent files. We want our application to hook into this functionality. Doing this is fairly, simple. In our `openFile` function, we'll add the following:
 
