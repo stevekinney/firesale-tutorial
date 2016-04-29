@@ -1,15 +1,15 @@
 html {
-  box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
+  box-sizing: border-box; /* A */
 }
 
 *, *:before, *:after {
-  box-sizing: inherit;
+  box-sizing: inherit; /* B */
+}
+
+html, body { /* C */
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -17,11 +17,13 @@ body {
   padding: 0;
 }
 
-body, input {
+body, input { /* C */
   font: menu;
 }
 
-textarea, input, div, button { outline: none; }
+textarea, input, div, button {
+  outline: none; /* D */
+}
 
 .controls {
   background-color: rgb(217, 241, 238);
@@ -51,14 +53,14 @@ textarea, input, div, button { outline: none; }
 
 .content {
   height: 100%;
-  display: flex;
+  display: flex; /* E */
 }
 
 .raw-markdown, .rendered-html {
   margin-top: 4em;
   min-height: 100vh;
   max-width: 50%;
-  flex-grow: 1;
+  flex-grow: 1; /* F */
   padding: 1em;
   overflow: scroll;
 }
@@ -68,5 +70,4 @@ textarea, input, div, button { outline: none; }
   border: none;
   background-color: rgb(238, 252, 250);
   font-family: monospace;
-  white-space: pre;
 }
