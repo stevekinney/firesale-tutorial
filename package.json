@@ -22,8 +22,12 @@
   },
   "homepage": "https://github.com/stevekinney/firesale-tutorial#readme",
   "devDependencies": {
-    "electron-packager": "^5.2.1",
-    "electron-prebuilt": "^0.36.7"
+    "babel-eslint": "^6.0.4",
+    "devtron": "^1.1.0",
+    "electron-packager": "^7.0.1",
+    "electron-prebuilt": "^1.0.2",
+    "eslint": "^2.10.1",
+    "eslint-config-airbnb": "^9.0.1"
   },
   "dependencies": {
     "jquery": "^2.2.0",
