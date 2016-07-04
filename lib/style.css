@@ -35,7 +35,6 @@ textarea, input, div, button {
 .controls button {
   background-color: rgb(181, 220, 216);
   border: none;
-  font-size: 1.1em;
   padding: 0.5em 1em;
 }
 
@@ -57,7 +56,7 @@ textarea, input, div, button {
 }
 
 .raw-markdown, .rendered-html {
-  margin-top: 4em;
+  margin-top: 3.5em;
   min-height: 100vh;
   max-width: 50%;
   flex-grow: 1; /* F */
@@ -67,7 +66,18 @@ textarea, input, div, button {
 
 .raw-markdown {
   font-size: 1.1em;
-  border: none;
+  border: 5px solid rgb(238, 252, 250);;
   background-color: rgb(238, 252, 250);
   font-family: monospace;
+  transition: background-color 0.2s , border-color 0.2s, border-width 0.2s;
+}
+
+.raw-markdown.drag-over {
+    background-color: rgb(181, 220, 216);
+    border-color: rgb(75, 160, 151);
+}
+
+.raw-markdown.drag-error {
+    background-color: rgba(170, 57, 57,1);
+    border-color: rgba(255,170,170,1);
 }
