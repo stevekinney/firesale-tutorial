@@ -7,7 +7,7 @@
         "stopOnEntry": false,
         "args": [],
         "cwd": "${workspaceRoot}",
-        "runtimeExecutable": "${workspaceRoot}/node_modules/electron-prebuilt/dist/Electron.app",
+        "runtimeExecutable": "${workspaceRoot}/node_modules/electron-prebuilt/dist/electron.exe",
         "runtimeArgs": [],
         "env": { },
         "sourceMaps": false,
