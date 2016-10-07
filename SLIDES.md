@@ -83,7 +83,7 @@ app.on('ready', function () {
 
   mainWindow = new BrowserWindow();
 
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', function () {
     mainWindow = null;
   });
 });
@@ -101,7 +101,7 @@ app.on('ready', function () {
 
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', function () {
     mainWindow = null;
   });
 });

@@ -1,6 +1,6 @@
 # Firesale
 
-This is a tutorial for building a Markdown-to-HTML renderer using Electron. It is meant to accompany my session on _Building a desktop application with Electron_ ([Part 1][] and [Part 2][]) at [O'Reilly's Fluent Conference 2016][fluent].
+This is a tutorial for building a Markdown-to-HTML renderer using Electron. It is meant to accompany my session on _Building a desktop application with Electron_ ([Part 1][] and [Part 2][]) at [O'Reilly's Fluent Conference 2016][fluent] and [JSConf Colombia](http://jsconf.co).
 
 [Part 1]: http://conferences.oreilly.com/fluent/javascript-html-us/public/schedule/detail/46730
 [Part 2]: http://conferences.oreilly.com/fluent/javascript-html-us/public/schedule/detail/47788
@@ -31,7 +31,7 @@ const electron = require('electron');
 
 Electron contains many [modules][] that we'll use for building our application. The first—and arguably, most important—that we're going to need is the `app` module. All modules exist as properties on the `electron` object. We're going to be using the `app` module pretty often, so let's store it in its own variable.
 
-[modules]: http://electron.atom.io/docs/v0.36.5/#modules-for-the-main-process
+[modules]: http://electron.atom.io/docs/
 
 ```js
 const electron = require('electron');
@@ -40,7 +40,7 @@ const app = electron.app;
 
 The [`app`][app] module has a number of life-cycle events. Here are a few examples:
 
-[app]: http://electron.atom.io/docs/v0.36.5/api/app/
+[app]: http://electron.atom.io/docs/api/app/
 
 - `ready`
 - `quit`
