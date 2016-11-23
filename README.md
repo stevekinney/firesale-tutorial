@@ -701,6 +701,18 @@ In `renderer.js`:
 var currentFile = null;
 ```
 
+We will assign the click events to the new buttons:
+
+```js
+$showInFileSystemButton.on('click', () => {
+	shell.showItemInFolder(currentFile);
+});
+
+$openInDefaultEditorButton.on('click', () => {
+	shell.openItem(currentFile);
+});
+```
+
 We'll also modify our `file-opened` event listener to update `currentFile` and enable the buttons.
 
 ```js
